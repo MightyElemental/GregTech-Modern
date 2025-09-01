@@ -1,5 +1,6 @@
 package com.gregtechceu.gtceu.client.model.machine.multipart;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.client.model.machine.MachineRenderState;
 
@@ -65,7 +66,17 @@ public class KeyValuePartCondition implements PartCondition {
                     String.format(Locale.ROOT, "Unknown value '%s' for property '%s' on '%s' in '%s'",
                             value, this.key, def.getOwner(), this.value));
         } else {
-            return (state) -> state.getValue(property).equals(optional.get());
+            return (state) -> {
+
+                if (!state.hasProperty(property)) {
+                    GTCEu.LOGGER.debug(
+                            "Predicate property '{}' is not in this state's definition (provided: '{}', defined with: '{}')",
+                            property.getName(), state.toString(), def.getOwner().toString());
+                    return false;
+                }
+
+                return state.getValue(property).equals(optional.get());
+            };
         }
     }
 
