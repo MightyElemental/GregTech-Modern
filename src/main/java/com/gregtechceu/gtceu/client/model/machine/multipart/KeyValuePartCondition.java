@@ -67,15 +67,13 @@ public class KeyValuePartCondition implements PartCondition {
                             value, this.key, def.getOwner(), this.value));
         } else {
             return (state) -> {
-
-                if (!state.hasProperty(property)) {
+                if (!state.is(def.getOwner())) {
                     GTCEu.LOGGER.debug(
-                            "Predicate property '{}' is not in this state's definition (provided: '{}', defined with: '{}')",
-                            property.getName(), state.toString(), def.getOwner().toString());
-                    return false;
+                            "MachineRenderState '{}' is different to MachineDefinition '{}' used to generate predicate for property '{}'",
+                            state.toString(), def.getOwner().toString(), property.getName());
                 }
 
-                return state.getValue(property).equals(optional.get());
+                return state.hasProperty(property) && state.getValue(property).equals(optional.get());
             };
         }
     }
