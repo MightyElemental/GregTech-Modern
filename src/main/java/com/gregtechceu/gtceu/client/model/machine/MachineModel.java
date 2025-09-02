@@ -302,6 +302,13 @@ public final class MachineModel extends BaseBakedModel implements ICoverableRend
         if (modelsByState.containsKey(renderState)) {
             quads.addAll(modelsByState.get(renderState).getQuads(blockState, side, rand, modelData, renderType));
         }
+        if (quads.isEmpty()) {
+            var defState = definition.defaultRenderState();
+            var fallback = modelsByState.get(defState);
+            if (fallback != null) {
+                quads.addAll(fallback.getQuads(blockState, side, rand, modelData, renderType));
+            }
+        }
     }
 
     public List<BakedQuad> replacePartBaseModel(List<BakedQuad> originalQuads, IMultiPart part, Direction frontFacing,
